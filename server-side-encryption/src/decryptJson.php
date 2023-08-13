@@ -2,6 +2,7 @@
 <?php
 
   function decryptJson($file) {
+    // parse the JSON file
     $parts      = explode("|", $file);
     $ciphertext = hex2bin($parts[0]);
     $iv         = hex2bin($parts[1]);
