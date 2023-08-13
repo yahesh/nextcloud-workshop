@@ -1,3 +1,7 @@
+# do not publish tmp files
+end-to-end-encryption/tmp/*
+server-side-encryption/tmp/*
+
 # do not publish macOS blergh
 ._*
 .DS_Store

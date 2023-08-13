@@ -1,30 +1,66 @@
 #!/usr/bin/env php
 <?php
 
-  function main($arguments, $stdin) {
-    // !!! do something
+  function decryptFile($file, $file_key) {
+    // decrypt the file
+    $first  = true;
+    $output = "";
+    while (0 < strlen($file)) {
+      // get the next block
+      $block = substr($file, 0,   8192);
+      $file  = substr($file, 8192);
 
-    // return exit code of the script
-    return 0;
-  }
+      // ignore the first block which just contains the header
+      if (!$first) {
+        // parse the block
+        $ciphertext = substr($block,  0,                                          strrpos($block, "00iv00"));
+        $iv         = substr($block,  strrpos($block, "00iv00")+strlen("00iv00"), strrpos($block, "00sig00")-strrpos($block, "00iv00")-strlen("00iv00"));
 
-  // parse the .env file
-  $ini = parse_ini_file(__DIR__."/.env");
-  if (is_array($ini)) {
-    foreach ($ini as $key => $value) {
-      putenv("$key=$value");
+        // decrypt block
+        $output = $output.openssl_decrypt($ciphertext, "aes-256-ctr", $file_key, OPENSSL_RAW_DATA, $iv);
+      }
+      $first = false;
     }
+
+    return $output;
   }
 
-  // read STDIN
-  $read   = [STDIN];
-  $write  = [];
-  $except = [];
-  $stdin = "";
-  if (0 < stream_select($read, $write, $except, 0, 0)) {
-    $stdin = stream_get_contents(STDIN);
-  }
+  if (!defined("IGNORE_MAIN")) {
+    function main($arguments, $stdin) {
+      // read the file contents
+      if (array_key_exists(1, $arguments)) {
+        $stdin = @file_get_contents($arguments[1]);
+      }
 
-  // execute the main method
-  exit(main($argv, $stdin));
+      // read the file key
+      if (array_key_exists(2, $arguments)) {
+        $file_key = @file_get_contents($arguments[2]);
+      }
+
+      print(decryptFile($stdin, $file_key));
+
+      // return exit code of the script
+      return 0;
+    }
+
+    // parse the .env file
+    $ini = parse_ini_file(__DIR__."/.env");
+    if (is_array($ini)) {
+      foreach ($ini as $key => $value) {
+        putenv("$key=$value");
+      }
+    }
+
+    // read STDIN
+    $read   = [STDIN];
+    $write  = [];
+    $except = [];
+    $stdin = "";
+    if (0 < stream_select($read, $write, $except, 0, 0)) {
+      $stdin = stream_get_contents(STDIN);
+    }
+
+    // execute the main method
+    exit(main($argv, $stdin));
+  }
 

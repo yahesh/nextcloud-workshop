@@ -1,9 +1,23 @@
 #!/usr/bin/env php
 <?php
 
-  function decryptFileKey($file, $private_key) {
-    // decrypt the file key
-    openssl_private_decrypt($file, $output, $private_key, OPENSSL_PKCS1_OAEP_PADDING);
+  function decryptJson($file) {
+    $parts      = explode("|", $file);
+    $ciphertext = hex2bin($parts[0]);
+    $iv         = hex2bin($parts[1]);
+
+    // derive the decryption key
+    $secret = substr(hash_hkdf("sha512", getenv("SECRET")), 0, 32);
+    $secret = hash_pbkdf2("sha1", $secret, "phpseclib", 1000, 16, true);
+
+    // decrypt the JSON content
+    $json = openssl_decrypt($ciphertext, "aes-128-cbc", $secret, OPENSSL_RAW_DATA, $iv);
+
+    // JSON-decode the JSON content
+    $json = json_decode($json, true);
+
+    // base64-decode the JSON value
+    $output = base64_decode($json["key"]);
 
     return $output;
   }
@@ -15,12 +29,7 @@
         $stdin = @file_get_contents($arguments[1]);
       }
 
-      // read the private key
-      if (array_key_exists(2, $arguments)) {
-        $private_key = @file_get_contents($arguments[2]);
-      }
-
-      print(decryptFileKey($stdin, $private_key));
+      print(decryptJson($stdin));
 
       // return exit code of the script
       return 0;
