@@ -1,30 +1,48 @@
 #!/usr/bin/env php
 <?php
 
-  function main($arguments, $stdin) {
-    // !!! do something
+  // include helper
+  require_once(__DIR__."/helper.php");
 
-    // return exit code of the script
-    return 0;
+  function decryptPrivateKey($file) {
+    // parse the private key file
+    $parts      = explode("|", $file);
+    $ciphertext = substr(base64_decode($parts[0]), 0, -16);
+    $iv         = base64_decode($parts[1]);
+    $salt       = base64_decode($parts[2]);
+
+    // derive the decryption key
+    $secret = hash_pbkdf2("sha1", preg_replace("@\s+@", "", strtolower(getenv("USER_MNEMONIC"))), $salt, 1024, 32, true);
+
+    // decrypt the private key
+    $iv     = convertGCMtoCTR($iv, $secret, "aes-256-ecb");
+    $output = base64_decode(openssl_decrypt($ciphertext, "aes-256-ctr", $secret, OPENSSL_RAW_DATA, $iv));
+
+    return $output;
   }
 
-  // parse the .env file
-  $ini = parse_ini_file(__DIR__."/.env");
-  if (is_array($ini)) {
-    foreach ($ini as $key => $value) {
-      putenv("$key=$value");
+  if (!defined("IGNORE_MAIN")) {
+    function main($arguments) {
+      // read the file contents
+      if (array_key_exists(1, $arguments)) {
+        $file = @file_get_contents($arguments[1]);
+      }
+
+      print(decryptPrivateKey($file));
+
+      // return exit code of the script
+      return 0;
     }
-  }
 
-  // read STDIN
-  $read   = [STDIN];
-  $write  = [];
-  $except = [];
-  $stdin = "";
-  if (0 < stream_select($read, $write, $except, 0, 0)) {
-    $stdin = stream_get_contents(STDIN);
-  }
+    // parse the .env file
+    $ini = parse_ini_file(__DIR__."/.env");
+    if (is_array($ini)) {
+      foreach ($ini as $key => $value) {
+        putenv("$key=$value");
+      }
+    }
 
-  // execute the main method
-  exit(main($argv, $stdin));
+    // execute the main method
+    exit(main($argv));
+  }
 

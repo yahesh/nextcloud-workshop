@@ -26,10 +26,10 @@
   }
 
   if (!defined("IGNORE_MAIN")) {
-    function main($arguments, $stdin) {
+    function main($arguments) {
       // read the file contents
       if (array_key_exists(1, $arguments)) {
-        $stdin = @file_get_contents($arguments[1]);
+        $file = @file_get_contents($arguments[1]);
       }
 
       // read the file key
@@ -37,7 +37,7 @@
         $file_key = @file_get_contents($arguments[2]);
       }
 
-      print(decryptFile($stdin, $file_key));
+      print(decryptFile($file, $file_key));
 
       // return exit code of the script
       return 0;
@@ -51,16 +51,7 @@
       }
     }
 
-    // read STDIN
-    $read   = [STDIN];
-    $write  = [];
-    $except = [];
-    $stdin = "";
-    if (0 < stream_select($read, $write, $except, 0, 0)) {
-      $stdin = stream_get_contents(STDIN);
-    }
-
     // execute the main method
-    exit(main($argv, $stdin));
+    exit(main($argv));
   }
 

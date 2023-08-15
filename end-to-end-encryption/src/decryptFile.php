@@ -1,30 +1,52 @@
 #!/usr/bin/env php
 <?php
 
-  function main($arguments, $stdin) {
-    // !!! do something
+  // include helper
+  require_once(__DIR__."/helper.php");
 
-    // return exit code of the script
-    return 0;
+  function decryptFile($file, $meta_data) {
+    // parse the meta data
+    $json   = json_decode($meta_data, true, 2, JSON_OBJECT_AS_ARRAY);
+    $iv     = base64_decode($json["initializationVector"]);
+    $secret = base64_decode($json["key"]);
+
+    // remove the AEAD tag from the file
+    $file = substr($file, 0, -16);
+
+    // decrypt the file
+    $iv     = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
+    $output = openssl_decrypt($file, "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv);
+
+    return $output;
   }
 
-  // parse the .env file
-  $ini = parse_ini_file(__DIR__."/.env");
-  if (is_array($ini)) {
-    foreach ($ini as $key => $value) {
-      putenv("$key=$value");
+  if (!defined("IGNORE_MAIN")) {
+    function main($arguments) {
+      // read the file contents
+      if (array_key_exists(1, $arguments)) {
+        $file = @file_get_contents($arguments[1]);
+      }
+
+      // read the meta data
+      if (array_key_exists(2, $arguments)) {
+        $meta_data = @file_get_contents($arguments[2]);
+      }
+
+      print(decryptFile($file, $meta_data));
+
+      // return exit code of the script
+      return 0;
     }
-  }
 
-  // read STDIN
-  $read   = [STDIN];
-  $write  = [];
-  $except = [];
-  $stdin = "";
-  if (0 < stream_select($read, $write, $except, 0, 0)) {
-    $stdin = stream_get_contents(STDIN);
-  }
+    // parse the .env file
+    $ini = parse_ini_file(__DIR__."/.env");
+    if (is_array($ini)) {
+      foreach ($ini as $key => $value) {
+        putenv("$key=$value");
+      }
+    }
 
-  // execute the main method
-  exit(main($argv, $stdin));
+    // execute the main method
+    exit(main($argv));
+  }
 

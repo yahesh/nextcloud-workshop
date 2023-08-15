@@ -24,13 +24,13 @@
   }
 
   if (!defined("IGNORE_MAIN")) {
-    function main($arguments, $stdin) {
+    function main($arguments) {
       // read the file contents
       if (array_key_exists(1, $arguments)) {
-        $stdin = @file_get_contents($arguments[1]);
+        $file = @file_get_contents($arguments[1]);
       }
 
-      print(decryptJson($stdin));
+      print(decryptJson($file));
 
       // return exit code of the script
       return 0;
@@ -44,16 +44,7 @@
       }
     }
 
-    // read STDIN
-    $read   = [STDIN];
-    $write  = [];
-    $except = [];
-    $stdin = "";
-    if (0 < stream_select($read, $write, $except, 0, 0)) {
-      $stdin = stream_get_contents(STDIN);
-    }
-
     // execute the main method
-    exit(main($argv, $stdin));
+    exit(main($argv));
   }
 
