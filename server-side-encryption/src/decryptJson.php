@@ -2,7 +2,7 @@
 <?php
 
   function decryptJson($file) {
-    // parse the JSON file
+    // parse the JSON content file
     $parts      = explode("|", $file);
     $ciphertext = hex2bin($parts[0]);
     $iv         = hex2bin($parts[1]);
@@ -14,10 +14,8 @@
     // decrypt the JSON content
     $json = openssl_decrypt($ciphertext, "aes-128-cbc", $secret, OPENSSL_RAW_DATA, $iv);
 
-    // JSON-decode the JSON content
-    $json = json_decode($json, true);
-
-    // base64-decode the JSON value
+    // parse the JSON content
+    $json   = json_decode($json, true);
     $output = base64_decode($json["key"]);
 
     return $output;

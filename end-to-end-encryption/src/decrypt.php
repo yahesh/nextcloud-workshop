@@ -10,11 +10,11 @@
   require_once(__DIR__."/decryptPrivateKey.php");
 
   function main($arguments) {
-    // prepare key material
+    // prepare the key material
     $private_key = decryptPrivateKey(file_get_contents(__DIR__."/".getenv("PRIVATE_KEY")));
     $meta_data   = decryptMetaData(file_get_contents(__DIR__."/".getenv("META_DATA")), $private_key, basename(getenv("FILE")));
 
-    // decrypt file
+    // decrypt the file
     $output = decryptFile(file_get_contents(__DIR__."/".getenv("FILE")), $meta_data);
     print($output);
 

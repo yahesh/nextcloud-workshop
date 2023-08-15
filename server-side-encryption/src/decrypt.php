@@ -11,11 +11,11 @@
   require_once(__DIR__."/decryptPrivateKey.php");
 
   function main($arguments) {
-    // prepare key material
+    // prepare the key material
     $private_key = decryptPrivateKey(decryptJson(file_get_contents(__DIR__."/".getenv("PRIVATE_KEY"))));
     $file_key    = decryptFileKey(decryptJson(file_get_contents(__DIR__."/".getenv("SHARE_KEY"))), $private_key);
 
-    // decrypt file
+    // decrypt the file
     $output = decryptFile(file_get_contents(__DIR__."/".getenv("FILE")), $file_key);
     print($output);
 

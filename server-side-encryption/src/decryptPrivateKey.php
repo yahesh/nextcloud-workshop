@@ -4,7 +4,7 @@
   function decryptPrivateKey($file) {
     // parse the private key file
     $file       = substr($file, strpos($file, "HEND")+strlen("HEND"));
-    $ciphertext = substr($file, 0,                                         strrpos($file, "00iv00"));
+    $ciphertext = substr($file, 0, strrpos($file, "00iv00"));
     $iv         = substr($file, strrpos($file, "00iv00")+strlen("00iv00"), strrpos($file, "00sig00")-strrpos($file, "00iv00")-strlen("00iv00"));
 
     // derive the decryption key 

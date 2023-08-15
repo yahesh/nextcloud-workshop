@@ -16,18 +16,18 @@
     $ciphertext  = substr(base64_decode($parts[0]), 0, -16);
     $iv          = base64_decode($parts[1]);
 
-    // decrypt the meta data key
-    $metadatakey = base64_decode(base64_decode(RSA::loadPrivateKey($private_key)
-                                               ->withPadding(RSA::ENCRYPTION_OAEP)
-                                               ->withHash("sha256")
-                                               ->withMGFHash("sha256")
-                                               ->decrypt($metadatakey)));
+    // derive the decryption key
+    $secret = base64_decode(base64_decode(RSA::loadPrivateKey($private_key)
+                                          ->withPadding(RSA::ENCRYPTION_OAEP)
+                                          ->withHash("sha256")
+                                          ->withMGFHash("sha256")
+                                          ->decrypt($metadatakey)));
 
     // decrypt the meta data
-    $iv       = convertGCMtoCTR($iv, $metadatakey, "aes-128-ecb");
-    $metadata = base64_decode(openssl_decrypt($ciphertext, "aes-128-ctr", $metadatakey, OPENSSL_RAW_DATA, $iv));
+    $iv       = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
+    $metadata = base64_decode(openssl_decrypt($ciphertext, "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv));
 
-    // add the iv to the metadata
+    // parse the meta data
     $metadata                         = json_decode($metadata, true, 2, JSON_OBJECT_AS_ARRAY);
     $metadata["initializationVector"] = $json["files"][$file_name]["initializationVector"];
     $output                           = json_encode($metadata, JSON_FORCE_OBJECT).PHP_EOL;

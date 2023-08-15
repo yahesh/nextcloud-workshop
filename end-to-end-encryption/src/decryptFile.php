@@ -10,12 +10,9 @@
     $iv     = base64_decode($json["initializationVector"]);
     $secret = base64_decode($json["key"]);
 
-    // remove the AEAD tag from the file
-    $file = substr($file, 0, -16);
-
     // decrypt the file
     $iv     = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
-    $output = openssl_decrypt($file, "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv);
+    $output = openssl_decrypt(substr($file, 0, -16), "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv);
 
     return $output;
   }

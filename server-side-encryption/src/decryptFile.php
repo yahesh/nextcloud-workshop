@@ -7,16 +7,16 @@
     $output = "";
     while (0 < strlen($file)) {
       // get the next block
-      $block = substr($file, 0,   8192);
+      $block = substr($file, 0, 8192);
       $file  = substr($file, 8192);
 
       // ignore the first block which just contains the header
       if (!$first) {
         // parse the block
-        $ciphertext = substr($block,  0,                                          strrpos($block, "00iv00"));
-        $iv         = substr($block,  strrpos($block, "00iv00")+strlen("00iv00"), strrpos($block, "00sig00")-strrpos($block, "00iv00")-strlen("00iv00"));
+        $ciphertext = substr($block, 0, strrpos($block, "00iv00"));
+        $iv         = substr($block, strrpos($block, "00iv00")+strlen("00iv00"), strrpos($block, "00sig00")-strrpos($block, "00iv00")-strlen("00iv00"));
 
-        // decrypt block
+        // decrypt the block
         $output = $output.openssl_decrypt($ciphertext, "aes-256-ctr", $file_key, OPENSSL_RAW_DATA, $iv);
       }
       $first = false;
