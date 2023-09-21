@@ -4,10 +4,6 @@
   // include helper
   require_once(__DIR__."/helper.php");
 
-  // we need a specific implementation of RSA that is not provided by PHP
-  require_once(__DIR__."/vendor/autoload.php");
-  use phpseclib3\Crypt\RSA;
-
   function decryptMetaData($file, $private_key, $file_name) {
     // parse the meta data file
     $json        = json_decode($file, true, 4, JSON_OBJECT_AS_ARRAY);
@@ -17,11 +13,7 @@
     $iv          = base64_decode($parts[1]);
 
     // derive the decryption key
-    $secret = base64_decode(base64_decode(RSA::loadPrivateKey($private_key)
-                                          ->withPadding(RSA::ENCRYPTION_OAEP)
-                                          ->withHash("sha256")
-                                          ->withMGFHash("sha256")
-                                          ->decrypt($metadatakey)));
+    $secret = base64_decode(base64_decode(rsaDecrypt($metadatakey, $private_key)));
 
     // decrypt the meta data
     $iv       = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
