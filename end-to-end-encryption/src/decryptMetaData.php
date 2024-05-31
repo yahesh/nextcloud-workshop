@@ -4,25 +4,32 @@
   // include helper
   require_once(__DIR__."/helper.php");
 
-  function decryptMetaData($file, $private_key, $file_name) {
+  function decryptMetaData($file, $private_key, $user_name) {
     // parse the meta data file
-    $json        = json_decode($file, true, 4, JSON_OBJECT_AS_ARRAY);
-    $metadatakey = base64_decode($json["metadata"]["metadataKey"]);
-    $parts       = explode("|", $json["files"][$file_name]["encrypted"]);
-    $ciphertext  = substr(base64_decode($parts[0]), 0, -16);
-    $iv          = base64_decode($parts[1]);
+    $json = json_decode($file, true, 4, JSON_OBJECT_AS_ARRAY);
 
-    // derive the decryption key
-    $secret = base64_decode(base64_decode(rsaDecrypt($metadatakey, $private_key)));
+    // find the encrypted meta data key
+    $metadatakey = null;
+    foreach ($json["users"] as $item) {
+      if (0 === strcasecmp($item["userId"], $user_name)) {
+        $metadatakey = base64_decode($item["encryptedMetadataKey"]);
+      }
+    }
+
+    // parse the encrypted meta data
+    $parts      = explode("|", $json["metadata"]["ciphertext"]);
+    $ciphertext = substr(base64_decode($parts[0]), 0, -16);
+    $nonce      = base64_decode($parts[1]);
+
+    // decrypt the meta data key
+    $secret = rsaDecrypt($metadatakey, $private_key);
 
     // decrypt the meta data
-    $iv       = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
-    $metadata = base64_decode(openssl_decrypt($ciphertext, "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv));
+    $nonce    = convertGCMtoCTR($nonce, $secret, "aes-128-ecb");
+    $metadata = openssl_decrypt($ciphertext, "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $nonce);
 
-    // parse the meta data
-    $metadata                         = json_decode($metadata, true, 2, JSON_OBJECT_AS_ARRAY);
-    $metadata["initializationVector"] = $json["files"][$file_name]["initializationVector"];
-    $output                           = json_encode($metadata, JSON_FORCE_OBJECT).PHP_EOL;
+    // decompress the meta data
+    $output = gzdecode($metadata);
 
     return $output;
   }
@@ -39,12 +46,12 @@
         $private_key = @file_get_contents($arguments[2]);
       }
 
-      // read the target file name
-      if (array_key_exists(3, $arguments)) {
-        $file_name = basename($arguments[3]);
+      // derive the user name from the private key
+      if (array_key_exists(2, $arguments)) {
+        $user_name = basename($arguments[2], ".private.key");
       }
 
-      print(decryptMetaData($file, $private_key, $file_name));
+      print(decryptMetaData($file, $private_key, $user_name));
 
       // return exit code of the script
       return 0;

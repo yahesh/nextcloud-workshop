@@ -1,14 +1,15 @@
 {
-    "files": {
-        "7c297d9297b0491cbd316bdf351402c8": {
-            "authenticationTag": "UxzksihVShstZk+f0/pd5g==",
-            "encrypted": "0fyilfIYmgngy3AMbMnFJiUJUygxDvVdKqP/IX/RSOrzc3CwWfM6Q3Lh6xenLmYyD3BltQN0kmxiwMajp4SFGcNDP1i3mew8/vjyq8tb+LzFTZpSW2Rt/dc4davCxyFvMZ2RAeI2elcpiFjHt67a/uzBJpf5BRa/FGVZKk0mkQQ=|CFOUPIzi8VBqYaAiFeHAGQ==",
-            "initializationVector": "K58yujxikyYfOcaaMPnIHw=="
-        }
-    },
     "metadata": {
-        "checksum": "8090fbf225878b3ccdda4ccddf070c539f5eaa88da5f380d479f1efd21f3be8a",
-        "metadataKey": "uVzFQkmbRkgtbFWqI1LIk9h8fRujSVsGp6BKw4PWVsglKJwRwfNHFjPwVxSFGCi2up887qslPXPCGQJVj8Ip0MZq02h2YhFkp5p/B5eNz4gIC1ZDbyfVdXk6KgGeFz/dzqN/cY7zIsopqPD9L64weIhCY6b7UC0Q79TXHl/cc+7QF2PWw6qwL8uPCuRlFjGkx7BPAmp7JTydB5YWFIZoWhDPKgzJlm9NxTN+Susud9mVCjqwkPI8gpGTcOz3pLE2ZptLZrb8eB2ThlFNTu8SqzpHWacIZbNlrHxlA9gnoOOQ6z22mZ8gP7kXc8RZhbo3G1XZpigwU4ekhDoOr9e0Cw==",
-        "version": 1.2
-    }
+        "authenticationTag": "xJ9HZC2a+w7Q6pDxLUNeSA==",
+        "ciphertext": "19ZfdO8Q5lbjIML44TkaY/VdNuou4qG+VUzju/AnXtexGB96BG9Q3RiTAfRMfrWajHbiSiGGFI3fwmrRTFs8sV82NnKx3IM65lyCJAkSxLh2oUpau56JpBJlrnP0DrIhIhKC9z5wbwsBbIT7IRu32N+PBRCNwGMIh++tInK1uNheUGc71XFQOMM9s0g1gKqM7PmIlbDGu0R88UHt3pqQXIm0SWtfbfXNppty5lgPWsKumjNPmEMOw5O4BM/an8p8Sj/pIGvJ6ZSK3RnbeQSV6JXt8DTDl5AEffX2OrUMq0lCoLQnCDX8pbIxy9NZCZrHWdpSogbi3IpdAvgHM4hSdXv+dVqHfz9j+GRV5HzkC7MhVg28xJ9HZC2a+w7Q6pDxLUNeSA==|Y2KJGTL8YYQQhP0ouppMXA==",
+        "nonce": "Y2KJGTL8YYQQhP0ouppMXA=="
+    },
+    "users": [
+        {
+            "certificate": "-----BEGIN CERTIFICATE-----\nMIIDkjCCAnqgAwIBAgIBADANBgkqhkiG9w0BAQUFADBiMQswCQYDVQQGEwJERTEb\nMBkGA1UECAwSQmFkZW4tV3VlcnR0ZW1iZXJnMRIwEAYDVQQHDAlTdHV0dGdhcnQx\nEjAQBgNVBAoMCU5leHRjbG91ZDEOMAwGA1UEAwwFYWRtaW4wHhcNMjQwNTMxMTYy\nMzMyWhcNNDQwNTI2MTYyMzMyWjBiMQswCQYDVQQGEwJERTEbMBkGA1UECAwSQmFk\nZW4tV3VlcnR0ZW1iZXJnMRIwEAYDVQQHDAlTdHV0dGdhcnQxEjAQBgNVBAoMCU5l\neHRjbG91ZDEOMAwGA1UEAwwFYWRtaW4wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw\nggEKAoIBAQDMsVw/DppwaSgNaFPdOpxYHCHalxbdjZjddJYLQgyFGKDoJ00ds6JX\n2ofFXuaQdKLgIGytsOgcL/ntebahNbG1BECDTSVe4tnv5Sc32Vr9lZW+AlLUiExJ\nE/W52+3XPl3GxnFsSeBuGvyaHZdny6+Y3+RppXNirZaztQ/V0S1ha81kd20GBU4n\nxOQOWheZbAVf/w7mV7OL4qhF8eciG+dPBXrvQOPq2S+C6IlxWm9EIrWkvsln/kPJ\nvXcJ0eGNN0xWMDDAx5BMoaUhwA1Rwd2LhxFHOzwbWvq5madi6tQ4wsd40zMmvWDI\nDyZn2mWot9xu0p46tAf5Ugj2yc5ixdAVAgMBAAGjUzBRMB0GA1UdDgQWBBSpDYSp\no73qppM4Bdsr7fHrsR5TWDAfBgNVHSMEGDAWgBSpDYSpo73qppM4Bdsr7fHrsR5T\nWDAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBBQUAA4IBAQB7UWBERuSaNL4a\nXuo+5HHycojZCycdVUbfKf4sL5u+nHVk5P6DxkwW4AtOGljKtyQt6tOhP4k8Y9Xf\nLgcVNjDYcUAuIwPlxN/JVd0Uf/7YriEi8TKTFYmEIhNlcXPcz/O5ItO32t2l88D9\nm1Wlt9YZIG8nF3HqSqAcKBKBFsAl2eb/b1/lnuh0tmyU7rBFYeU+87+gPfHZ5Y/A\nwHfB7zL2FyHcY12WOqv7Oz9Lp7tVTopriabXq1Jp4zgawGWSYpZfAxx5OTO9UXOm\n1pfh6LcCvIpJ0mHyYGi8kGcZlWtwtdcW6I4WPpOxNUtrCq9hghstu/THslNFiqNR\nyaZtMU2K\n-----END CERTIFICATE-----\n",
+            "encryptedMetadataKey": "dfMbyCwUkxvqr3XY+BA4NZpN2CFH2DMMbjKbF50bfRtWsxnFmtdZEB3WevQ9AfMh2vSHeLrh1PahQ5QJDGDfRcn2pfuGdarKbVyz0S5RXaI4AowqBPQ9pyeMh7wyzwv90O6gsjUmJPxBsHyBYUjkMLNo65sAQ7jx+oZ8SaJCax6s7dwQfwQDXMJVqFRql/8HmcOwPdHuRORS7GyY51yOpWjfTw3WCr/dvvyP1kUcKPQq13+gWrGNrQHdggQ0s3C7Oh8lhD5Gd/szUh+RByWbSzx1P8uem6IZwWtMT43s9UXjA1t4malnN7XgDpnzicEwflHZJsAfKPHU41utKlcgZA==",
+            "userId": "admin"
+        }
+    ],
+    "version": "2.0"
 }

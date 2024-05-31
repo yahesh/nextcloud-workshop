@@ -8,15 +8,15 @@
     // parse the private key file
     $parts      = explode("|", $file);
     $ciphertext = substr(base64_decode($parts[0]), 0, -16);
-    $iv         = base64_decode($parts[1]);
+    $nonce      = base64_decode($parts[1]);
     $salt       = base64_decode($parts[2]);
 
     // derive the decryption key
     $secret = hash_pbkdf2("sha1", preg_replace("@\s+@", "", strtolower(getenv("USER_MNEMONIC"))), $salt, 1024, 32, true);
 
     // decrypt the private key
-    $iv     = convertGCMtoCTR($iv, $secret, "aes-256-ecb");
-    $output = base64_decode(openssl_decrypt($ciphertext, "aes-256-ctr", $secret, OPENSSL_RAW_DATA, $iv));
+    $nonce  = convertGCMtoCTR($nonce, $secret, "aes-256-ecb");
+    $output = base64_decode(openssl_decrypt($ciphertext, "aes-256-ctr", $secret, OPENSSL_RAW_DATA, $nonce));
 
     return $output;
   }

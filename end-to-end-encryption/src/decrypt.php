@@ -12,10 +12,10 @@
   function main($arguments) {
     // prepare the key material
     $private_key = decryptPrivateKey(file_get_contents(__DIR__."/".getenv("PRIVATE_KEY")));
-    $meta_data   = decryptMetaData(file_get_contents(__DIR__."/".getenv("META_DATA")), $private_key, basename(getenv("FILE")));
+    $meta_data   = decryptMetaData(file_get_contents(__DIR__."/".getenv("META_DATA")), $private_key, basename(getenv("PRIVATE_KEY"), ".private.key"));
 
     // decrypt the file
-    $output = decryptFile(file_get_contents(__DIR__."/".getenv("FILE")), $meta_data);
+    $output = decryptFile(file_get_contents(__DIR__."/".getenv("FILE")), $meta_data, basename(getenv("FILE")));
     print($output);
 
     // return exit code of the script

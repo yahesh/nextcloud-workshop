@@ -1,12 +1,12 @@
 <?php
 
   // convert a GCM nonce to a CTR counter
-  function convertGCMtoCTR($iv, $key, $algo) {
+  function convertGCMtoCTR($nonce, $key, $algo) {
     $result = null;
 
     // check special case first
-    if (0x0C === strlen($iv)) {
-      $result = $iv."\x00\x00\x00\x01";
+    if (0x0C === strlen($nonce)) {
+      $result = $nonce."\x00\x00\x00\x01";
     } else {
       // produce GHASH of the nonce
       $subkey = openssl_encrypt("\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00",
@@ -15,23 +15,23 @@
                                 OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
       if (false !== $subkey) {
         // store for later use
-        $ivlen = strlen($iv);
+        $noncelen = strlen($nonce);
 
-        // pad iv to 128 bit block
-        if (0x00 !== ($ivlen % 0x10)) {
-          $iv = $iv.str_repeat("\x00", 0x10 - ($ivlen % 0x10));
+        // pad nonce to 128 bit block
+        if (0x00 !== ($noncelen % 0x10)) {
+          $nonce = $nonce.str_repeat("\x00", 0x10 - ($noncelen % 0x10));
         }
 
         // append zero padding
-        $iv = $iv."\x00\x00\x00\x00\x00\x00\x00\x00";
+        $nonce = $nonce."\x00\x00\x00\x00\x00\x00\x00\x00";
 
-        // append 64-bit iv length
-        $iv = $iv."\x00\x00\x00\x00".pack("N", ($ivlen << 0x03));
+        // append 64-bit nonce length
+        $nonce = $nonce."\x00\x00\x00\x00".pack("N", ($noncelen << 0x03));
 
         // actual GHASH calculation
         $result = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-        for ($i = 0x00; $i < strlen($iv)/0x10; $i++) {
-          $block  = $result ^ substr($iv, $i * 0x10, 0x10);
+        for ($i = 0x00; $i < strlen($nonce)/0x10; $i++) {
+          $block  = $result ^ substr($nonce, $i * 0x10, 0x10);
           $tmp    = "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
           $tmpkey = $subkey;
 

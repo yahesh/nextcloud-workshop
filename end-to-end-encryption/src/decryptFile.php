@@ -4,22 +4,22 @@
   // include helper
   require_once(__DIR__."/helper.php");
 
-  function decryptFile($file, $meta_data) {
+  function decryptFile($file, $meta_data, $file_name) {
     // parse the meta data
-    $json   = json_decode($meta_data, true, 2, JSON_OBJECT_AS_ARRAY);
-    $iv     = base64_decode($json["initializationVector"]);
-    $secret = base64_decode($json["key"]);
+    $json   = json_decode($meta_data, true, 4, JSON_OBJECT_AS_ARRAY);
+    $nonce  = base64_decode($json["files"][$file_name]["nonce"]);
+    $secret = base64_decode($json["files"][$file_name]["key"]);
 
     // decrypt the file
-    $iv     = convertGCMtoCTR($iv, $secret, "aes-128-ecb");
-    $output = openssl_decrypt(substr($file, 0, -16), "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $iv);
+    $nonce  = convertGCMtoCTR($nonce, $secret, "aes-128-ecb");
+    $output = openssl_decrypt(substr($file, 0, -16), "aes-128-ctr", $secret, OPENSSL_RAW_DATA, $nonce);
 
     return $output;
   }
 
   if (!defined("IGNORE_MAIN")) {
     function main($arguments) {
-      // read the file contents
+      // read the file
       if (array_key_exists(1, $arguments)) {
         $file = @file_get_contents($arguments[1]);
       }
@@ -29,7 +29,12 @@
         $meta_data = @file_get_contents($arguments[2]);
       }
 
-      print(decryptFile($file, $meta_data));
+      // derive the file name from the file
+      if (array_key_exists(1, $arguments)) {
+        $file_name = basename($arguments[1]);
+      }
+
+      print(decryptFile($file, $meta_data, $file_name));
 
       // return exit code of the script
       return 0;
